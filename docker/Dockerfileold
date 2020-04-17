@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/windows/servercore/iis
+
+SHELL ["powershell"]
+
+RUN Install-WindowsFeature NET-Framework-45-ASPNET ; \
+    Install-WindowsFeature Web-Asp-Net45
+
+COPY /Users/Bhaskar/.jenkins/workspace/dotnetapp/OfrDisign AppDeploy
+RUN Remove-WebSite -Name 'Default Web Site'
+RUN New-Website -Name 'appdeploy' -Port 80 \
+    -PhysicalPath 'c:\AppDeploy' -ApplicationPool '.NET v4.5'
+
+EXPOSE 80
+
+CMD ["ping", "-t", "localhost"]
